@@ -7,8 +7,8 @@ from collections import defaultdict
 # path_to_dir = "/var/lib/deluge/Downloads/"
 paths = ["/var/lib/deluge/Downloads/","/content/Shows2/Downloads/","/content/Shows3/Downloads/","/content/Shows4/Downloads/"]
 show_paths = ["/content/Shows/","/content/Shows2/Shows/","/content/Shows3/Shows/","/content/Shows4/Shows/"]
-# paths = ["/Users/mane/scratch/fake/Shows1/Downloads/","/Users/mane/scratch/fake/Shows2/Downloads/"]
-# show_paths = ["/Users/mane/scratch/fake/Shows1/Shows/","/Users/mane/scratch/fake/Shows2/Shows/"]
+paths = ["/Users/mane/scratch/fake/Shows1/Downloads/","/Users/mane/scratch/fake/Shows2/Downloads/"]
+show_paths = ["/Users/mane/scratch/fake/Shows1/Shows/","/Users/mane/scratch/fake/Shows2/Shows/"]
 
 movies = ["/content/Shows5/Downloads/"]
 movie_path = ["/content/Shows5/Movies/"]
@@ -44,7 +44,6 @@ for i,path in enumerate(paths):
         #the file is serires pack where it would be s01-s07
         #set season to 0 to have dir of show name created only
         if season:
-            season = re.search(pattern,name)
             season = season.group()
             pos = name.find(season)
             season = 0
@@ -55,6 +54,7 @@ for i,path in enumerate(paths):
             
             if not season:
                 print(f"Show {name} does not match naming conventions.")
+                continue
             
             #isolate season number from entry and find position of season in name string
             season = season.group() 
@@ -90,7 +90,7 @@ for i,path in enumerate(paths):
 
             #dest = /path/to/show/Season n/
             dest = show_dir + key + '/Season ' + season + '/'
-            if season == 0:
+            if season == '0':
                 dest = show_dir + key + '/'
 
             subprocess.call(['mv',loc,dest])
