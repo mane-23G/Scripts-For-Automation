@@ -30,7 +30,7 @@ for i,path in enumerate(paths):
     sorting = defaultdict(list)
 
     #pattern to find number of season regardless of '.' or ' ' and Season or S
-    pattern = r'[sS](eason\ )?[0-9]{1,3}'
+    pattern = r'[sS](eason\ )?[0-9]{1,3}-'
 
     #pattern to find if year is included in title
     pattern_year = r'\([0-9]{4}\)'
@@ -40,15 +40,27 @@ for i,path in enumerate(paths):
         #turn entry name to string and search for the season pattern 
         name = str(entry.name)
         season = re.search(pattern,name)
-        if not season:
-            print(f"Entry {name} doesnt fit naming convention. ")
-            continue
-        
-        #isolate season number from entry and find position of season in name string
-        season = season.group() 
-        pos = name.find(season)
-        pattern_season = r'[0-9]{1,3}'
-        season = re.search(pattern_season,season).group()
+
+        #the file is serires pack where it would be s01-s07
+        #set season to 0 to have dir of show name created only
+        if season:
+            season = re.search(pattern,name)
+            season = season.group()
+            pos = name.find(season)
+            season = 0
+        else:
+            #the file is individual files
+            pattern_alt = r'[sS](eason\ )?[0-9]{1,3}'
+            season = re.search(pattern_alt,name)
+            
+            if not season:
+                print(f"Show {name} does not match naming conventions.")
+            
+            #isolate season number from entry and find position of season in name string
+            season = season.group() 
+            pos = name.find(season)
+            pattern_season = r'[0-9]{1,3}'
+            season = re.search(pattern_season,season).group()
 
         #search entry name for year i.e. 2014 1990  and find pos if it exists
         year = re.search(pattern_year,name[0:pos])
@@ -78,6 +90,8 @@ for i,path in enumerate(paths):
 
             #dest = /path/to/show/Season n/
             dest = show_dir + key + '/Season ' + season + '/'
+            if season == 0:
+                dest = show_dir + key + '/'
 
             subprocess.call(['mv',loc,dest])
 
@@ -92,3 +106,4 @@ for i,m in enumerate(movies):
     for entry in target_dir.iterdir():
         name = m + str(entry.name)
         subprocess.call(['mv',name,mov_dir])
+
