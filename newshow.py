@@ -4,17 +4,11 @@ from pathlib import Path
 import re
 from collections import defaultdict
 
-# path_to_dir = "/var/lib/deluge/Downloads/"
-# paths = ["/var/lib/deluge/Downloads/","/content/Shows2/Downloads/","/content/Shows3/Downloads/","/content/Shows4/Downloads/","/content/Shows5/Downloads"]
-# show_paths = ["/content/Shows/","/content/Shows2/Shows/","/content/Shows3/Shows/","/content/Shows4/Shows/","/content/Shows5/Movies"]
+paths = ["/var/lib/deluge/Downloads/","/content/Shows2/Downloads/","/content/Shows3/Downloads/","/content/Shows4/Downloads/","/content/Shows5/Downloads"]
+show_paths = ["/content/Shows/","/content/Shows2/Shows/","/content/Shows3/Shows/","/content/Shows4/Shows/","/content/Shows5/Movies"]
 paths = ["/Users/mane/scratch/fake/Shows1/Downloads/","/Users/mane/scratch/fake/Shows2/Downloads/"]
 show_paths = ["/Users/mane/scratch/fake/Shows1/Shows/","/Users/mane/scratch/fake/Shows2/Shows/"]
 
-# movies = ["/content/Shows5/Downloads/"]
-# movie_paths = ["/content/Shows5/Movies/"]
-
-# paths = ["/home/mmane/scratch/fake/Shows1/Downloads/","/home/mmane/scratch/fake/Shows2/Downloads/"]
-# show_paths = ["/home/mmane/scratch/fake/Shows1/Shows/","/home/mmane/scratch/fake/Shows2/Shows/"]
 
 for i,path in enumerate(paths):
     #creates the path of the dir to be traversed
@@ -43,25 +37,29 @@ for i,path in enumerate(paths):
 
     #iterate through the items in the Downloads folder
     for entry in target_dir.iterdir():
+
         #turn entry name to string and search for the season pattern 
         name = str(entry.name)
 
+        #search for all the patterns
         season = re.search(pattern,name)
         season_pack = re.search(pattern_alt,name)
         year = re.search(pattern_year,name)
         res = re.search(pattern_res,name)
         pos = len(name)
 
-
+        #if file name is for multiple seasons make no season folder
         if season_pack:
             season = season_pack.group()
             pos = name.find(season)
             season = 0
+        #if file is individual get number of seasons
         elif season:
             season = season.group()
             pos = name.find(season)
             pattern_season = r'[0-9]{1,3}'
             season = re.search(pattern_season,season).group()
+        #its a movie or doesnt have season in title
         else:
             season = 0
 
@@ -71,11 +69,13 @@ for i,path in enumerate(paths):
             year_pos = name.find(year)
             pos = pos if year_pos > pos else year_pos
         
+        #search for res in the file name like 1080p
         if res:
             res = res.group()
             res_pos = name.find(res)
             pos = pos if res_pos > pos else res_pos
         
+        #file name doesnt fit 
         if pos == 0:
             print(f"File {name} does not match naming conventions")
             continue
