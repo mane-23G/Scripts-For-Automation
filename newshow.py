@@ -5,13 +5,13 @@ import re
 from collections import defaultdict
 
 # path_to_dir = "/var/lib/deluge/Downloads/"
-paths = ["/var/lib/deluge/Downloads/","/content/Shows2/Downloads/","/content/Shows3/Downloads/","/content/Shows4/Downloads/"]
-show_paths = ["/content/Shows/","/content/Shows2/Shows/","/content/Shows3/Shows/","/content/Shows4/Shows/"]
+# paths = ["/var/lib/deluge/Downloads/","/content/Shows2/Downloads/","/content/Shows3/Downloads/","/content/Shows4/Downloads/","/content/Shows5/Downloads"]
+# show_paths = ["/content/Shows/","/content/Shows2/Shows/","/content/Shows3/Shows/","/content/Shows4/Shows/","/content/Shows5/Movies"]
 paths = ["/Users/mane/scratch/fake/Shows1/Downloads/","/Users/mane/scratch/fake/Shows2/Downloads/"]
 show_paths = ["/Users/mane/scratch/fake/Shows1/Shows/","/Users/mane/scratch/fake/Shows2/Shows/"]
 
-movies = ["/content/Shows5/Downloads/"]
-movie_path = ["/content/Shows5/Movies/"]
+# movies = ["/content/Shows5/Downloads/"]
+# movie_paths = ["/content/Shows5/Movies/"]
 
 # paths = ["/home/mmane/scratch/fake/Shows1/Downloads/","/home/mmane/scratch/fake/Shows2/Downloads/"]
 # show_paths = ["/home/mmane/scratch/fake/Shows1/Shows/","/home/mmane/scratch/fake/Shows2/Shows/"]
@@ -30,43 +30,55 @@ for i,path in enumerate(paths):
     sorting = defaultdict(list)
 
     #pattern to find number of season regardless of '.' or ' ' and Season or S
-    pattern = r'[sS](eason\ )?[0-9]{1,3}-'
+    pattern = r'[sS](eason\ )?[0-9]{1,3}'
 
+    #the file is individual files
+    pattern_alt = r'[sS](eason\ )?[0-9]{1,3}-'
+    
     #pattern to find if year is included in title
-    pattern_year = r'\([0-9]{4}\)'
+    pattern_year = r'\(?[0-9]{4}\)?'
+    
+    #pattern to find resoultion 
+    pattern_res = r'[\[(]?[0-9]{4}p'
 
     #iterate through the items in the Downloads folder
     for entry in target_dir.iterdir():
         #turn entry name to string and search for the season pattern 
         name = str(entry.name)
-        season = re.search(pattern,name)
 
-        #the file is serires pack where it would be s01-s07
-        #set season to 0 to have dir of show name created only
-        if season:
-            season = season.group()
+        season = re.search(pattern,name)
+        season_pack = re.search(pattern_alt,name)
+        year = re.search(pattern_year,name)
+        res = re.search(pattern_res,name)
+        pos = len(name)
+
+
+        if season_pack:
+            season = season_pack.group()
             pos = name.find(season)
             season = 0
-        else:
-            #the file is individual files
-            pattern_alt = r'[sS](eason\ )?[0-9]{1,3}'
-            season = re.search(pattern_alt,name)
-            
-            if not season:
-                print(f"Show {name} does not match naming conventions.")
-                continue
-            
-            #isolate season number from entry and find position of season in name string
-            season = season.group() 
+        elif season:
+            season = season.group()
             pos = name.find(season)
             pattern_season = r'[0-9]{1,3}'
             season = re.search(pattern_season,season).group()
+        else:
+            season = 0
 
         #search entry name for year i.e. 2014 1990  and find pos if it exists
-        year = re.search(pattern_year,name[0:pos])
         if year:
             year = year.group()
-            pos = name.find(year)
+            year_pos = name.find(year)
+            pos = pos if year_pos > pos else year_pos
+        
+        if res:
+            res = res.group()
+            res_pos = name.find(res)
+            pos = pos if res_pos > pos else res_pos
+        
+        if pos == 0:
+            print(f"File {name} does not match naming conventions")
+            continue
 
         #split the name and then rejoin it for the title (folder name) and strip it of anything but spaces and alphanumerics 
         title = name[0:pos].split('.')
@@ -93,17 +105,6 @@ for i,path in enumerate(paths):
             if season == '0':
                 dest = show_dir + key + '/'
 
-            subprocess.call(['mv',loc,dest])
-
-# iterate move downlad and dest paths
-# move all files in download to dest
-for i,m in enumerate(movies):
-    #creates the path of the dir to be traversed
-    target_dir = Path(m)
-    mov_dir = movie_path[i]
-    
-    #moves entry to dest folder
-    for entry in target_dir.iterdir():
-        name = m + str(entry.name)
-        subprocess.call(['mv',name,mov_dir])
-
+            # print(f"loc is {loc} and dest is {dest}")
+            subprocess.call(['mv',loc,dest])  
+        # print("\n")
