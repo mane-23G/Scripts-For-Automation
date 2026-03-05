@@ -86,6 +86,8 @@ for i,path in enumerate(paths):
             title = name[0:pos].split(' ')
         title = ' '.join(title)
         title = re.sub(r'[^a-zA-Z0-9\ ]','',title).strip()
+
+        #add the year if num of season is 0 and year exists for entry
         if season == 0 and year:
             year = year if len(year) == 4 else year[1:5]
             title = title + ' (' + year + ')'
