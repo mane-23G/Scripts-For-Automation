@@ -6,8 +6,8 @@ from collections import defaultdict
 
 paths = ["/var/lib/deluge/Downloads/","/content/Shows2/Downloads/","/content/Shows3/Downloads/","/content/Shows4/Downloads/","/content/Shows5/Downloads"]
 show_paths = ["/content/Shows/","/content/Shows2/Shows/","/content/Shows3/Shows/","/content/Shows4/Shows/","/content/Shows5/Movies"]
-# paths = ["/Users/mane/scratch/fake/Shows1/Downloads/","/Users/mane/scratch/fake/Shows2/Downloads/"]
-# show_paths = ["/Users/mane/scratch/fake/Shows1/Shows/","/Users/mane/scratch/fake/Shows2/Shows/"]
+paths = ["/Users/mane/scratch/fake/Shows1/Downloads/","/Users/mane/scratch/fake/Shows2/Downloads/"]
+show_paths = ["/Users/mane/scratch/fake/Shows1/Shows/","/Users/mane/scratch/fake/Shows2/Shows/"]
 
 
 for i,path in enumerate(paths):
@@ -79,19 +79,14 @@ for i,path in enumerate(paths):
         if pos == 0:
             print(f"File {name} does not match naming conventions")
             continue
-        
+
         #split the name and then rejoin it for the title (folder name) and strip it of anything but spaces and alphanumerics 
         title = name[0:pos].split('.')
         if len(title) == 1:
             title = name[0:pos].split(' ')
         title = ' '.join(title)
         title = re.sub(r'[^a-zA-Z0-9\ ]','',title).strip()
-
-        #add the year if num of season is 0 and year exists for entry
-        if season == 0 and year:
-            year = year if len(year) == 4 else year[1:5]
-            title = title + ' (' + year + ')'
-                    
+        
         #add show and number of seasons and entry name and corresponding season
         season = int(season)
         simplified[title] = max(simplified[title],season)
