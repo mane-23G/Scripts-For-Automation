@@ -6,13 +6,8 @@ from collections import defaultdict
 
 paths = ["/var/lib/deluge/Downloads/","/content/Shows2/Downloads/","/content/Shows3/Downloads/","/content/Shows4/Downloads/","/content/Shows5/Downloads/"]
 show_paths = ["/content/Shows/","/content/Shows2/Shows/","/content/Shows3/Shows/","/content/Shows4/Shows/","/content/Shows5/Movies/"]
-paths = ["/Users/mane/scratch/Scripts-For-Automation/Shows1/Downloads/","/Users/mane/scratch/Scripts-For-Automation/Shows2/Downloads/"]
-show_paths = ["/Users/mane/scratch/Scripts-For-Automation/Shows1/Shows/","/Users/mane/scratch/Scripts-For-Automation/Shows2/Shows/"]
-
-txt = "New episodes added for the following:" 
-f = open("list.txt","a")
-f.write(txt)
-f.write('\n')
+# paths = ["/Users/mane/scratch/Scripts-For-Automation/Shows1/Downloads/","/Users/mane/scratch/Scripts-For-Automation/Shows2/Downloads/"]
+# show_paths = ["/Users/mane/scratch/Scripts-For-Automation/Shows1/Shows/","/Users/mane/scratch/Scripts-For-Automation/Shows2/Shows/"]
 
 
 for i,path in enumerate(paths):
@@ -117,9 +112,5 @@ for i,path in enumerate(paths):
             
         print(f"Moved {count} files to {show_dir + key}!")
         # print("\n")
-        # subprocess.call(['echo', key, '>> list.txt'])
-        f.write(key)
-        f.write('\n')
-
 
     #send out an email of new content added
