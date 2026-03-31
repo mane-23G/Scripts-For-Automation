@@ -113,4 +113,3 @@ for i,path in enumerate(paths):
         print(f"Moved {count} files to {show_dir + key}!")
         # print("\n")
 
-    #send out an email of new content added
